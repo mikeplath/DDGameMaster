@@ -36,11 +36,9 @@ namespace DDGameMaster.Views
                 newCharacter.Name = NameTextBox.Text;
                 newCharacter.Race.Name = RaceComboBox.SelectedItem.ToString();
                 
-                // Set Class Name
                 string className = ClassComboBox.SelectedItem.ToString();
                 newCharacter.Class.Name = className;
 
-                // UPDATED LOGIC: Set HitDie based on selected class
                 switch (className)
                 {
                     case "Barbarian": newCharacter.Class.HitDie = 12; break;
@@ -57,7 +55,6 @@ namespace DDGameMaster.Views
                     case "Wizard": newCharacter.Class.HitDie = 6; break;
                 }
                 
-                // Read stats from text boxes
                 newCharacter.Stats.Strength = int.Parse(StrengthTextBox.Text);
                 newCharacter.Stats.Dexterity = int.Parse(DexterityTextBox.Text);
                 newCharacter.Stats.Constitution = int.Parse(ConstitutionTextBox.Text);
@@ -65,14 +62,17 @@ namespace DDGameMaster.Views
                 newCharacter.Stats.Wisdom = int.Parse(WisdomTextBox.Text);
                 newCharacter.Stats.Charisma = int.Parse(CharismaTextBox.Text);
 
-                // NEW: Calculate starting Hit Points
                 int conModifier = CharacterStats.GetModifier(newCharacter.Stats.Constitution);
                 newCharacter.MaximumHitPoints = newCharacter.Class.HitDie + conModifier;
-                newCharacter.CurrentHitPoints = newCharacter.MaximumHitPoints; // Start with full health
+                newCharacter.CurrentHitPoints = newCharacter.MaximumHitPoints;
+
+                // NEW: Calculate starting Armor Class
+                int dexModifier = CharacterStats.GetModifier(newCharacter.Stats.Dexterity);
+                newCharacter.ArmorClass = 10 + dexModifier; // Base AC is 10 + Dexterity modifier
 
                 GameState.Instance.PlayerCharacter = newCharacter;
 
-                MessageBox.Show($"Character '{newCharacter.Name}' was created with {newCharacter.MaximumHitPoints} HP.");
+                MessageBox.Show($"Character '{newCharacter.Name}' was created with {newCharacter.MaximumHitPoints} HP and {newCharacter.ArmorClass} AC.");
 
                 if (NavigationService.CanGoBack)
                 {
