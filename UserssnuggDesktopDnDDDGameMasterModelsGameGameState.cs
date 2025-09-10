@@ -7,24 +7,19 @@ namespace DDGameMaster.Models.Game
         private static readonly GameState instance = new GameState();
 
         public Character PlayerCharacter { get; set; }
+        
+        // NEW PROPERTY: This will hold the text for our game log.
         public string GameLog { get; set; }
 
         private GameState() 
         {
+            // When the game starts, the log is empty.
             GameLog = string.Empty;
         }
 
         public static GameState Instance
         {
             get { return instance; }
-        }
-        
-        // ** NEW METHOD TO UPDATE THE GAME STATE FROM A LOADED FILE **
-        public void UpdateState(GameState loadedState)
-        {
-            // Copy the properties from the loaded state into the current one
-            this.PlayerCharacter = loadedState.PlayerCharacter;
-            this.GameLog = loadedState.GameLog;
         }
     }
 }
