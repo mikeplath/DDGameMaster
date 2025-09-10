@@ -7,11 +7,21 @@
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
             <TextBlock Text="Character Sheet" Foreground="White" FontSize="32" HorizontalAlignment="Center" Margin="0,0,0,20"/>
 
-            <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="5" Padding="15">
+            <Border BorderBrush="Gray" BorderThickness="1" CornerRadius="5" Padding="15" MinWidth="450">
                 <StackPanel>
                     <!-- Basic Info -->
                     <TextBlock x:Name="NameTextBlock" Foreground="White" FontSize="22" FontWeight="Bold" HorizontalAlignment="Center"/>
-                    <TextBlock x:Name="RaceClassLevelTextBlock" Foreground="LightGray" FontSize="18" HorizontalAlignment="Center" Margin="0,0,0,15"/>
+                    <TextBlock x:Name="RaceClassLevelTextBlock" Foreground="LightGray" FontSize="18" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                    
+                    <!-- HP Display -->
+                    <TextBlock x:Name="HitPointsTextBlock" Foreground="IndianRed" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,5"/>
+                    
+                    <!-- NEW HP MANAGEMENT CONTROLS -->
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,5,0,15">
+                        <Button Content="Damage" Width="80" Height="30" Margin="5" Click="Damage_Click"/>
+                        <TextBox x:Name="HpAmountTextBox" Width="60" Height="30" Text="1" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
+                        <Button Content="Heal" Width="80" Height="30" Margin="5" Click="Heal_Click"/>
+                    </StackPanel>
                     
                     <!-- Stats Grid -->
                     <Grid>
