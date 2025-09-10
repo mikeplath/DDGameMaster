@@ -27,17 +27,18 @@
                 <TextBlock Grid.Row="0" Grid.Column="0" Text="Name:" Foreground="White" VerticalAlignment="Center" Margin="5"/>
                 <TextBox Grid.Row="0" Grid.Column="1" x:Name="NameTextBox" Width="200" Margin="5"/>
 
+                <!-- THIS IS THE OLD TEXTBOX REPLACED BY A DROPDOWN -->
                 <TextBlock Grid.Row="1" Grid.Column="0" Text="Race:" Foreground="White" VerticalAlignment="Center" Margin="5"/>
-                <TextBox Grid.Row="1" Grid.Column="1" x:Name="RaceTextBox" Width="200" Margin="5"/>
+                <ComboBox Grid.Row="1" Grid.Column="1" x:Name="RaceComboBox" Width="200" Margin="5"/>
 
+                <!-- THIS IS THE OLD TEXTBOX REPLACED BY A DROPDOWN -->
                 <TextBlock Grid.Row="2" Grid.Column="0" Text="Class:" Foreground="White" VerticalAlignment="Center" Margin="5"/>
-                <TextBox Grid.Row="2" Grid.Column="1" x:Name="ClassTextBox" Width="200" Margin="5"/>
+                <ComboBox Grid.Row="2" Grid.Column="1" x:Name="ClassComboBox" Width="200" Margin="5"/>
 
-                <!-- NEW STAT INPUTS -->
                 <TextBlock Grid.Row="3" Grid.Column="0" Text="Strength:" Foreground="White" VerticalAlignment="Center" Margin="5"/>
                 <TextBox Grid.Row="3" Grid.Column="1" x:Name="StrengthTextBox" Width="200" Margin="5" Text="10"/>
 
-                <TextBlock Grid.Row="4" Grid.Column="0" Text="Dexterity:" Foreground="White" VerticalAlignment="center" Margin="5"/>
+                <TextBlock Grid.Row="4" Grid.Column="0" Text="Dexterity:" Foreground="White" VerticalAlignment="Center" Margin="5"/>
                 <TextBox Grid.Row="4" Grid.Column="1" x:Name="DexterityTextBox" Width="200" Margin="5" Text="10"/>
 
                 <TextBlock Grid.Row="5" Grid.Column="0" Text="Constitution:" Foreground="White" VerticalAlignment="Center" Margin="5"/>

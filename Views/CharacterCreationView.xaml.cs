@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic; // Required for using lists
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
@@ -12,6 +13,22 @@ namespace DDGameMaster.Views
         public CharacterCreationView()
         {
             InitializeComponent();
+            // NEW: Call the method to populate our dropdowns
+            PopulateComboBoxes();
+        }
+
+        // NEW METHOD: This sets up the dropdown menus with choices.
+        private void PopulateComboBoxes()
+        {
+            // Create a list of available races
+            var races = new List<string> { "Human", "Elf", "Dwarf", "Halfling", "Dragonborn", "Gnome", "Half-Elf", "Half-Orc", "Tiefling" };
+            RaceComboBox.ItemsSource = races;
+            RaceComboBox.SelectedIndex = 0; // Select the first item by default
+
+            // Create a list of available classes
+            var classes = new List<string> { "Barbarian", "Bard", "Cleric", "Druid", "Fighter", "Monk", "Paladin", "Ranger", "Rogue", "Sorcerer", "Warlock", "Wizard" };
+            ClassComboBox.ItemsSource = classes;
+            ClassComboBox.SelectedIndex = 0; // Select the first item by default
         }
 
         private void CreateCharacter_Click(object sender, RoutedEventArgs e)
@@ -21,10 +38,11 @@ namespace DDGameMaster.Views
                 Character newCharacter = new Character();
 
                 newCharacter.Name = NameTextBox.Text;
-                newCharacter.Race.Name = RaceTextBox.Text;
-                newCharacter.Class.Name = ClassTextBox.Text;
+
+                // UPDATED: Get the selected race and class from the dropdowns
+                newCharacter.Race.Name = RaceComboBox.SelectedItem.ToString();
+                newCharacter.Class.Name = ClassComboBox.SelectedItem.ToString();
                 
-                // NEW: Read the stats from the text boxes and save them
                 newCharacter.Stats.Strength = int.Parse(StrengthTextBox.Text);
                 newCharacter.Stats.Dexterity = int.Parse(DexterityTextBox.Text);
                 newCharacter.Stats.Constitution = int.Parse(ConstitutionTextBox.Text);
@@ -32,7 +50,6 @@ namespace DDGameMaster.Views
                 newCharacter.Stats.Wisdom = int.Parse(WisdomTextBox.Text);
                 newCharacter.Stats.Charisma = int.Parse(CharismaTextBox.Text);
 
-                // Store the completed character in our central GameState
                 GameState.Instance.PlayerCharacter = newCharacter;
 
                 MessageBox.Show($"Character '{newCharacter.Name}' was created and stored in GameState.");
@@ -44,8 +61,12 @@ namespace DDGameMaster.Views
             }
             catch (FormatException)
             {
-                // This is simple error handling. If you type "abc" into a stat box, this message will appear.
                 MessageBox.Show("Invalid input. Please ensure all stats are numbers.");
+            }
+            catch (Exception ex)
+            {
+                // A general catch-all for any other unexpected errors
+                MessageBox.Show($"An error occurred: {ex.Message}");
             }
         }
 
