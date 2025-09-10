@@ -1,4 +1,4 @@
-using System.Collections.Generic; // Required for using Lists
+using System.Collections.Generic;
 
 namespace DDGameMaster.Models.Character
 {
@@ -14,9 +14,11 @@ namespace DDGameMaster.Models.Character
         public int MaximumHitPoints { get; set; }
         public int CurrentHitPoints { get; set; }
         public int ArmorClass { get; set; }
-
-        // NEW PROPERTY FOR INVENTORY
         public List<string> Inventory { get; set; }
+        public List<string> SavingThrowProficiencies { get; set; }
+
+        // NEW PROPERTY FOR SKILL PROFICIENCIES
+        public List<string> SkillProficiencies { get; set; }
 
         public Character()
         {
@@ -30,9 +32,11 @@ namespace DDGameMaster.Models.Character
             MaximumHitPoints = 0;
             CurrentHitPoints = 0;
             ArmorClass = 10;
-            
-            // When a new character is made, give them an empty inventory list
             Inventory = new List<string>();
+            SavingThrowProficiencies = new List<string>();
+            
+            // When a new character is made, give them an empty list for skill proficiencies
+            SkillProficiencies = new List<string>();
         }
     }
 }

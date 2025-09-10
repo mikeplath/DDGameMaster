@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media; // Required for SolidColorBrush
 using System.Windows.Navigation;
 using DDGameMaster.Models.Character;
 using DDGameMaster.Models.Game;
@@ -27,7 +29,6 @@ namespace DDGameMaster.Views
             else
             {
                 NameTextBlock.Text = "No Character Found";
-                RaceClassLevelTextBlock.Text = "Please create a new character from the main menu.";
             }
         }
         
@@ -44,9 +45,16 @@ namespace DDGameMaster.Views
             int nextLevelXp = (character.Level < xpThresholds.Length) ? xpThresholds[character.Level] : 0;
             ExperienceTextBlock.Text = $"XP: {character.ExperiencePoints} / {nextLevelXp}";
             
-            // UPDATED: Refresh the inventory list display
-            InventoryListBox.ItemsSource = null; // Clear the list first
-            InventoryListBox.ItemsSource = character.Inventory; // Then set it to the character's inventory
+            InventoryListBox.ItemsSource = null;
+            InventoryListBox.ItemsSource = character.Inventory;
+
+            UpdateSavingThrowsDisplay(character);
+            UpdateSkillsDisplay(character); // NEW: Update the skills display
+        }
+
+        private void UpdateSavingThrowsDisplay(Character character)
+        {
+            int proficiencyBonus = (character.Level - 1) / 4 + 2;
 
             int strMod = CharacterStats.GetModifier(character.Stats.Strength);
             int dexMod = CharacterStats.GetModifier(character.Stats.Dexterity);
@@ -55,12 +63,78 @@ namespace DDGameMaster.Views
             int wisMod = CharacterStats.GetModifier(character.Stats.Wisdom);
             int chaMod = CharacterStats.GetModifier(character.Stats.Charisma);
 
-            StrengthTextBlock.Text     = $"Strength:     {character.Stats.Strength} ({(strMod >= 0 ? "+" : "")}{strMod})";
-            DexterityTextBlock.Text    = $"Dexterity:    {character.Stats.Dexterity} ({(dexMod >= 0 ? "+" : "")}{dexMod})";
-            ConstitutionTextBlock.Text = $"Constitution: {character.Stats.Constitution} ({(conMod >= 0 ? "+" : "")}{conMod})";
-            IntelligenceTextBlock.Text = $"Intelligence: {character.Stats.Intelligence} ({(intMod >= 0 ? "+" : "")}{intMod})";
-            WisdomTextBlock.Text       = $"Wisdom:       {character.Stats.Wisdom} ({(wisMod >= 0 ? "+" : "")}{wisMod})";
-            CharismaTextBlock.Text     = $"Charisma:     {character.Stats.Charisma} ({(chaMod >= 0 ? "+" : "")}{chaMod})";
+            int strSave = strMod + (character.SavingThrowProficiencies.Contains("Strength") ? proficiencyBonus : 0);
+            int dexSave = dexMod + (character.SavingThrowProficiencies.Contains("Dexterity") ? proficiencyBonus : 0);
+            int conSave = conMod + (character.SavingThrowProficiencies.Contains("Constitution") ? proficiencyBonus : 0);
+            int intSave = intMod + (character.SavingThrowProficiencies.Contains("Intelligence") ? proficiencyBonus : 0);
+            int wisSave = wisMod + (character.SavingThrowProficiencies.Contains("Wisdom") ? proficiencyBonus : 0);
+            int chaSave = chaMod + (character.SavingThrowProficiencies.Contains("Charisma") ? proficiencyBonus : 0);
+
+            StrSaveTextBlock.Text = $"Strength:     {(strSave >= 0 ? "+" : "")}{strSave}";
+            DexSaveTextBlock.Text = $"Dexterity:    {(dexSave >= 0 ? "+" : "")}{dexSave}";
+            ConSaveTextBlock.Text = $"Constitution: {(conSave >= 0 ? "+" : "")}{conSave}";
+            IntSaveTextBlock.Text = $"Intelligence: {(intSave >= 0 ? "+" : "")}{intSave}";
+            WisSaveTextBlock.Text = $"Wisdom:       {(wisSave >= 0 ? "+" : "")}{wisSave}";
+            ChaSaveTextBlock.Text = $"Charisma:     {(chaSave >= 0 ? "+" : "")}{chaSave}";
+        }
+
+        // NEW METHOD to calculate and display all 18 skills
+        private void UpdateSkillsDisplay(Character character)
+        {
+            SkillsGrid.Children.Clear();
+            SkillsGrid.RowDefinitions.Clear();
+            SkillsGrid.ColumnDefinitions.Clear();
+
+            SkillsGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+            SkillsGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+
+            var skills = new List<(string Name, string Stat)>
+            {
+                ("Acrobatics", "Dexterity"), ("Animal Handling", "Wisdom"), ("Arcana", "Intelligence"),
+                ("Athletics", "Strength"), ("Deception", "Charisma"), ("History", "Intelligence"),
+                ("Insight", "Wisdom"), ("Intimidation", "Charisma"), ("Investigation", "Intelligence"),
+                ("Medicine", "Wisdom"), ("Nature", "Intelligence"), ("Perception", "Wisdom"),
+                ("Performance", "Charisma"), ("Persuasion", "Charisma"), ("Religion", "Intelligence"),
+                ("Sleight of Hand", "Dexterity"), ("Stealth", "Dexterity"), ("Survival", "Wisdom")
+            };
+
+            int proficiencyBonus = (character.Level - 1) / 4 + 2;
+
+            for (int i = 0; i < skills.Count; i++)
+            {
+                if (i % 9 == 0 && i != 0) { } // Simple logic to split into two columns
+                if(SkillsGrid.RowDefinitions.Count <= i % 9)
+                {
+                    SkillsGrid.RowDefinitions.Add(new RowDefinition());
+                }
+
+                var skill = skills[i];
+                int statValue = 0;
+                switch (skill.Stat)
+                {
+                    case "Strength": statValue = character.Stats.Strength; break;
+                    case "Dexterity": statValue = character.Stats.Dexterity; break;
+                    case "Constitution": statValue = character.Stats.Constitution; break;
+                    case "Intelligence": statValue = character.Stats.Intelligence; break;
+                    case "Wisdom": statValue = character.Stats.Wisdom; break;
+                    case "Charisma": statValue = character.Stats.Charisma; break;
+                }
+
+                int modifier = CharacterStats.GetModifier(statValue);
+                bool isProficient = character.SkillProficiencies.Contains(skill.Name);
+                int totalBonus = modifier + (isProficient ? proficiencyBonus : 0);
+
+                var textBlock = new TextBlock
+                {
+                    Text = $"{skill.Name}: {(totalBonus >= 0 ? "+" : "")}{totalBonus}",
+                    Foreground = isProficient ? new SolidColorBrush(Colors.LawnGreen) : new SolidColorBrush(Colors.White),
+                    Margin = new Thickness(5, 2, 5, 2)
+                };
+
+                Grid.SetRow(textBlock, i % 9);
+                Grid.SetColumn(textBlock, i / 9);
+                SkillsGrid.Children.Add(textBlock);
+            }
         }
 
         private void Damage_Click(object sender, RoutedEventArgs e)
@@ -105,7 +179,6 @@ namespace DDGameMaster.Views
             }
         }
 
-        // NEW METHOD: Handles the Add Item button click
         private void AddItem_Click(object sender, RoutedEventArgs e)
         {
             var character = GameState.Instance.PlayerCharacter;
@@ -114,8 +187,8 @@ namespace DDGameMaster.Views
             if (character != null && !string.IsNullOrWhiteSpace(newItem))
             {
                 character.Inventory.Add(newItem);
-                ItemNameTextBox.Clear(); // Clear the text box after adding
-                UpdateAllDisplays(); // Refresh the screen
+                ItemNameTextBox.Clear();
+                UpdateAllDisplays();
             }
         }
 
