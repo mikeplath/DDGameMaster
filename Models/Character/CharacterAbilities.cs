@@ -1,79 +1,24 @@
-using System;
-using System.Collections.Generic;
-
 namespace DDGameMaster.Models.Character
 {
     public class CharacterAbilities
     {
-        private readonly List<Ability> _abilities = new List<Ability>();
-        public const int MaxAbilities = 9;
-        
-        public event EventHandler<AbilitiesChangedEventArgs>? AbilitiesChanged;
-        
-        public IReadOnlyList<Ability> Abilities => _abilities.AsReadOnly();
-        
-        public bool AddAbility(Ability ability)
+        // Core D&D Ability Scores
+        public int Strength { get; set; }
+        public int Dexterity { get; set; }
+        public int Constitution { get; set; }
+        public int Intelligence { get; set; }
+        public int Wisdom { get; set; }
+        public int Charisma { get; set; }
+
+        // Constructor to set default values
+        public CharacterAbilities()
         {
-            if (_abilities.Count < MaxAbilities)
-            {
-                _abilities.Add(ability);
-                OnAbilitiesChanged();
-                return true;
-            }
-            return false;
-        }
-        
-        public void UseAbility(Ability ability)
-        {
-            ability.Use();
-            OnAbilitiesChanged();
-        }
-        
-        private void OnAbilitiesChanged()
-        {
-            AbilitiesChanged?.Invoke(this, new AbilitiesChangedEventArgs());
+            Strength = 10;
+            Dexterity = 10;
+            Constitution = 10;
+            Intelligence = 10;
+            Wisdom = 10;
+            Charisma = 10;
         }
     }
-    
-    public class Ability
-    {
-        public string Name { get; set; } = "";
-        public string Description { get; set; } = "";
-        public AbilityType Type { get; set; }
-        public int Uses { get; set; } = -1; // -1 means unlimited
-        public int MaxUses { get; set; } = -1;
-        public bool RequiresRest { get; set; }
-        
-        public bool CanUse => Uses != 0;
-        
-        public void Use()
-        {
-            if (Uses > 0)
-            {
-                Uses--;
-            }
-        }
-        
-        public void RestoreUses()
-        {
-            Uses = MaxUses;
-        }
-        
-        public override string ToString()
-        {
-            if (Uses == -1) return Name;
-            return $"{Name} ({Uses}/{MaxUses})";
-        }
-    }
-    
-    public enum AbilityType
-    {
-        ClassFeature,
-        RacialTrait,
-        Feat,
-        Background,
-        Magic
-    }
-    
-    public class AbilitiesChangedEventArgs : EventArgs { }
 }
