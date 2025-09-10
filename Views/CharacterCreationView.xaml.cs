@@ -2,8 +2,8 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
-using DDGameMaster.Models.Character; 
-using DDGameMaster.Models.Game; // This line tells the script to use our new GameState manager
+using DDGameMaster.Models.Character;
+using DDGameMaster.Models.Game;
 
 namespace DDGameMaster.Views
 {
@@ -16,31 +16,41 @@ namespace DDGameMaster.Views
 
         private void CreateCharacter_Click(object sender, RoutedEventArgs e)
         {
-            // Create a new Character object using our blueprint
-            Character newCharacter = new Character();
-
-            // Fill the blueprint with data from the text boxes on the screen
-            newCharacter.Name = NameTextBox.Text;
-            newCharacter.Race.Name = RaceTextBox.Text;
-            newCharacter.Class.Name = ClassTextBox.Text;
-
-            // **THIS IS THE NEW, IMPORTANT PART**
-            // We are now storing the character we just made into our central GameState manager.
-            GameState.Instance.PlayerCharacter = newCharacter;
-
-            // Display a message box to confirm that the character was created AND stored.
-            MessageBox.Show($"Character '{newCharacter.Name}' was created and stored in GameState.");
-
-            // After creation, navigate back to the previous screen (the main menu)
-            if (NavigationService.CanGoBack)
+            try
             {
-                NavigationService.GoBack();
+                Character newCharacter = new Character();
+
+                newCharacter.Name = NameTextBox.Text;
+                newCharacter.Race.Name = RaceTextBox.Text;
+                newCharacter.Class.Name = ClassTextBox.Text;
+                
+                // NEW: Read the stats from the text boxes and save them
+                newCharacter.Stats.Strength = int.Parse(StrengthTextBox.Text);
+                newCharacter.Stats.Dexterity = int.Parse(DexterityTextBox.Text);
+                newCharacter.Stats.Constitution = int.Parse(ConstitutionTextBox.Text);
+                newCharacter.Stats.Intelligence = int.Parse(IntelligenceTextBox.Text);
+                newCharacter.Stats.Wisdom = int.Parse(WisdomTextBox.Text);
+                newCharacter.Stats.Charisma = int.Parse(CharismaTextBox.Text);
+
+                // Store the completed character in our central GameState
+                GameState.Instance.PlayerCharacter = newCharacter;
+
+                MessageBox.Show($"Character '{newCharacter.Name}' was created and stored in GameState.");
+
+                if (NavigationService.CanGoBack)
+                {
+                    NavigationService.GoBack();
+                }
+            }
+            catch (FormatException)
+            {
+                // This is simple error handling. If you type "abc" into a stat box, this message will appear.
+                MessageBox.Show("Invalid input. Please ensure all stats are numbers.");
             }
         }
 
         private void Back_Click(object sender, RoutedEventArgs e)
         {
-            // This allows the "Back" button to work
             if (NavigationService.CanGoBack)
             {
                 NavigationService.GoBack();

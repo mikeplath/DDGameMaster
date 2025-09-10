@@ -1,7 +1,8 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
-using DDGameMaster.Models.Game; // This tells the script to use our GameState manager
+using DDGameMaster.Models.Character; // We need this to get the static GetModifier method
+using DDGameMaster.Models.Game;
 
 namespace DDGameMaster.Views
 {
@@ -10,34 +11,45 @@ namespace DDGameMaster.Views
         public CharacterSheetView()
         {
             InitializeComponent();
-            LoadCharacterData(); // We call a new method to load the data when the page opens
+            LoadCharacterData();
         }
 
         private void LoadCharacterData()
         {
-            // Get the character from our central storage box (GameState)
             var character = GameState.Instance.PlayerCharacter;
 
-            // Check to make sure a character actually exists before we try to display it
             if (character != null)
             {
-                // Take the data from the stored character and put it into the text boxes on the screen
-                NameTextBlock.Text = $"Name: {character.Name}";
-                RaceTextBlock.Text = $"Race: {character.Race.Name}";
-                ClassTextBlock.Text = $"Class: {character.Class.Name}";
+                // Display Name, Race, Class, and Level
+                NameTextBlock.Text = character.Name;
+                RaceClassLevelTextBlock.Text = $"Level {character.Level} {character.Race.Name} {character.Class.Name}";
+
+                // Get the modifier for each stat and display it
+                int strMod = CharacterStats.GetModifier(character.Stats.Strength);
+                int dexMod = CharacterStats.GetModifier(character.Stats.Dexterity);
+                int conMod = CharacterStats.GetModifier(character.Stats.Constitution);
+                int intMod = CharacterStats.GetModifier(character.Stats.Intelligence);
+                int wisMod = CharacterStats.GetModifier(character.Stats.Wisdom);
+                int chaMod = CharacterStats.GetModifier(character.Stats.Charisma);
+
+                // Display the stat score and its modifier (e.g., "Strength: 14 (+2)")
+                StrengthTextBlock.Text     = $"Strength:     {character.Stats.Strength} ({(strMod >= 0 ? "+" : "")}{strMod})";
+                DexterityTextBlock.Text    = $"Dexterity:    {character.Stats.Dexterity} ({(dexMod >= 0 ? "+" : "")}{dexMod})";
+                ConstitutionTextBlock.Text = $"Constitution: {character.Stats.Constitution} ({(conMod >= 0 ? "+" : "")}{conMod})";
+                IntelligenceTextBlock.Text = $"Intelligence: {character.Stats.Intelligence} ({(intMod >= 0 ? "+" : "")}{intMod})";
+                WisdomTextBlock.Text       = $"Wisdom:       {character.Stats.Wisdom} ({(wisMod >= 0 ? "+" : "")}{wisMod})";
+                CharismaTextBlock.Text     = $"Charisma:     {character.Stats.Charisma} ({(chaMod >= 0 ? "+" : "")}{chaMod})";
             }
             else
             {
-                // If for some reason no character is found, display a message.
-                NameTextBlock.Text = "No character found.";
-                RaceTextBlock.Text = "Please create a character first.";
-                ClassTextBlock.Text = "";
+                // If no character exists, show a helpful message
+                NameTextBlock.Text = "No Character Found";
+                RaceClassLevelTextBlock.Text = "Please create a new character from the main menu.";
             }
         }
 
         private void Back_Click(object sender, RoutedEventArgs e)
         {
-            // This allows the "Back" button to work
             if (NavigationService.CanGoBack)
             {
                 NavigationService.GoBack();

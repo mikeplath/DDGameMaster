@@ -1,24 +1,33 @@
+using System;
+
 namespace DDGameMaster.Models.Character
 {
     public class CharacterStats
     {
-        // Core character statistics
-        public int Level { get; set; }
-        public int ExperiencePoints { get; set; }
-        public int MaxHitPoints { get; set; }
-        public int CurrentHitPoints { get; set; }
-        public int ArmorClass { get; set; }
-        public int Speed { get; set; }
+        public int Strength { get; set; }
+        public int Dexterity { get; set; }
+        public int Constitution { get; set; }
+        public int Intelligence { get; set; }
+        public int Wisdom { get; set; }
+        public int Charisma { get; set; }
 
-        // Constructor to set default values
+        // NEW METHOD
+        // This calculates the modifier for a given stat score.
+        // The formula is (Score - 10) / 2, rounded down.
+        public static int GetModifier(int score)
+        {
+            return (int)Math.Floor((score - 10) / 2.0);
+        }
+
         public CharacterStats()
         {
-            Level = 1;
-            ExperiencePoints = 0;
-            MaxHitPoints = 10;
-            CurrentHitPoints = 10;
-            ArmorClass = 10;
-            Speed = 30; // Standard speed in feet for most races
+            // Default stats to 10, which has a +0 modifier
+            Strength = 10;
+            Dexterity = 10;
+            Constitution = 10;
+            Intelligence = 10;
+            Wisdom = 10;
+            Charisma = 10;
         }
     }
 }
