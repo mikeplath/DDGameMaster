@@ -2,7 +2,8 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Navigation;
-using DDGameMaster.Models.Character; // This line tells the script to use our new Character blueprint
+using DDGameMaster.Models.Character; 
+using DDGameMaster.Models.Game; // This line tells the script to use our new GameState manager
 
 namespace DDGameMaster.Views
 {
@@ -23,9 +24,12 @@ namespace DDGameMaster.Views
             newCharacter.Race.Name = RaceTextBox.Text;
             newCharacter.Class.Name = ClassTextBox.Text;
 
-            // Display a message box to confirm that the character was created successfully
-            // This shows that the information is now stored in our new Character object
-            MessageBox.Show($"Character Created!\nName: {newCharacter.Name}\nRace: {newCharacter.Race.Name}\nClass: {newCharacter.Class.Name}");
+            // **THIS IS THE NEW, IMPORTANT PART**
+            // We are now storing the character we just made into our central GameState manager.
+            GameState.Instance.PlayerCharacter = newCharacter;
+
+            // Display a message box to confirm that the character was created AND stored.
+            MessageBox.Show($"Character '{newCharacter.Name}' was created and stored in GameState.");
 
             // After creation, navigate back to the previous screen (the main menu)
             if (NavigationService.CanGoBack)
